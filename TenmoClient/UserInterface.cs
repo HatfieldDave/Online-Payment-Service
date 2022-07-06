@@ -1,4 +1,5 @@
 ﻿using System;
+using TenmoClient.APIClients;
 using TenmoClient.Data;
 
 namespace TenmoClient
@@ -7,6 +8,7 @@ namespace TenmoClient
     {
         private readonly ConsoleService consoleService = new ConsoleService();
         private readonly AuthService authService = new AuthService();
+        private readonly BalanceService balanceService = new BalanceService();
 
         private bool quitRequested = false;
 
@@ -75,7 +77,7 @@ namespace TenmoClient
                     switch (menuSelection)
                     {
                         case 1: // View Balance
-                            Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
+                            GetUserBalance(3000); // TODO: Implement me
                             break;
 
                         case 2: // View Past Transfers
@@ -147,6 +149,12 @@ namespace TenmoClient
                     Console.WriteLine("DOING NOTHING WITH JWT");
                 }
             }
+        }
+
+        
+        public void GetUserBalance(int user_id)
+        {
+            Console.WriteLine(balanceService.GetBalance(user_id).Balance);
         }
     }
 }

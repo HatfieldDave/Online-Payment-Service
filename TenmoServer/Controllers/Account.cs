@@ -25,7 +25,7 @@ namespace TenmoServer.Controllers
             // to do dao stuff and things 
         }
 
-        [HttpGet("balance/{user_id}")] 
+        [HttpGet("balance")] 
         public ActionResult GetBalance()
         {
             int id = LoggedInUserId;

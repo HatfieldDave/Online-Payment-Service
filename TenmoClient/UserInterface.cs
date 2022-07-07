@@ -43,7 +43,7 @@ namespace TenmoClient
             }
             else if (loginRegister == 2)
             {
-                HandleUserRegister();
+               HandleUserRegister();
             }
             else
             {
@@ -77,7 +77,7 @@ namespace TenmoClient
                     switch (menuSelection)
                     {
                         case 1: // View Balance
-                            GetUserBalance(3000); // TODO: Implement me
+                            GetUserBalance(); // TODO: Implement me
                             break;
 
                         case 2: // View Past Transfers
@@ -145,6 +145,7 @@ namespace TenmoClient
                 {
                     string jwt = authenticatedUser.Token;
 
+                    balanceService.UpdateToken(jwt);
                     // TODO: Do something with this JWT.
                     Console.WriteLine("DOING NOTHING WITH JWT");
                 }
@@ -152,9 +153,9 @@ namespace TenmoClient
         }
 
         
-        public void GetUserBalance(int user_id)
+        public void GetUserBalance()
         {
-            Console.WriteLine(balanceService.GetBalance(user_id).Balance);
+            Console.WriteLine($"Your current balance is {balanceService.GetBalance().Balance.ToString("C")}");
         }
     }
 }

@@ -12,9 +12,9 @@ namespace TenmoClient.APIClients
         private const string API_BASE_URL = "https://localhost:44315/";
         private readonly IRestClient client = new RestClient();
 
-        public AccountBalance GetBalance(int user_id)
+        public AccountBalance GetBalance()
         {
-            RestRequest request = new RestRequest($"{API_BASE_URL}balance/{user_id}");
+            RestRequest request = new RestRequest($"{API_BASE_URL}balance");
             request.AddHeader("Authorization", "Bearer " + token);
             IRestResponse<AccountBalance> response = client.Get<AccountBalance>(request);
            

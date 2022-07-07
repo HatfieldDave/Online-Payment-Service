@@ -18,10 +18,12 @@ namespace TenmoServer.Controllers
     {
        
         private readonly IAccountBalanceDAO accountBalanceDAO;
+        private readonly IUserDAO userDAO;
 
-        public Account(IAccountBalanceDAO accountBalanceDAO)
+        public Account(IAccountBalanceDAO accountBalanceDAO, IUserDAO userDAO)
         {
             this.accountBalanceDAO = accountBalanceDAO;
+            this.userDAO = userDAO;
             // to do dao stuff and things 
         }
 
@@ -31,6 +33,14 @@ namespace TenmoServer.Controllers
             int id = LoggedInUserId;
             AccountBalance accountBalance = accountBalanceDAO.GetBalance(id);
             return Ok(accountBalance);
+        }
+
+        [HttpGet("users")]  //TODO switch to username if doesn't work
+        public ActionResult GetOtherUsers()
+        {
+            int id = LoggedInUserId;
+            List<User> otherUsers = userDAO.GetAllOtherUsers(id);
+                return Ok(otherUsers);
         }
 
         private int LoggedInUserId

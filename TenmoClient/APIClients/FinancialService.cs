@@ -7,10 +7,30 @@ using TenmoClient.Data;
 
 namespace TenmoClient.APIClients
 {
-    class BalanceService
+    class FinancialService
     {
         private const string API_BASE_URL = "https://localhost:44315/";
         private readonly IRestClient client = new RestClient();
+
+        public List<API_User> GetAllOtherUsers()
+        {
+            RestRequest request = new RestRequest($"{API_BASE_URL}users");  //TODO rename to username if doesn't work
+            request.AddHeader("Authorization", "Bearer " + token);
+            IRestResponse<List<API_User>> response = client.Get<List<API_User>>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("Could not connect to the server; Try again later!");
+                return null;
+            }
+            if (!response.IsSuccessful)
+            {
+                Console.WriteLine("Problem getting other users: " + response.StatusDescription);
+                Console.WriteLine(response.Content);
+                return null;
+            }
+            return response.Data;
+        }
+
 
         public AccountBalance GetBalance()
         {
@@ -20,12 +40,12 @@ namespace TenmoClient.APIClients
            
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
-                Console.WriteLine("Could not connect to the dad-a-base; Try again later!");
+                Console.WriteLine("Could not connect to the server; Try again later!");
                 return null;
             }
             if (!response.IsSuccessful)
             {
-                Console.WriteLine("Problem getting joke: " + response.StatusDescription);
+                Console.WriteLine("Problem getting balance: " + response.StatusDescription);
                 Console.WriteLine(response.Content);
                 return null;
             }

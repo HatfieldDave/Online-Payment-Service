@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TenmoClient.APIClients;
 using TenmoClient.Data;
 
@@ -8,7 +9,7 @@ namespace TenmoClient
     {
         private readonly ConsoleService consoleService = new ConsoleService();
         private readonly AuthService authService = new AuthService();
-        private readonly BalanceService balanceService = new BalanceService();
+        private readonly FinancialService financialService = new FinancialService();
 
         private bool quitRequested = false;
 
@@ -89,6 +90,12 @@ namespace TenmoClient
                             break;
 
                         case 4: // Send TE Bucks
+                            //make below into sub routine
+                            List<API_User> otherUsers = financialService.GetAllOtherUsers();
+                            foreach (API_User user in otherUsers)
+                            { 
+                                Console.WriteLine($"{user.Username}");
+                            }
                             Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
                             break;
 
@@ -145,9 +152,7 @@ namespace TenmoClient
                 {
                     string jwt = authenticatedUser.Token;
 
-                    balanceService.UpdateToken(jwt);
-                    // TODO: Do something with this JWT.
-                    Console.WriteLine("DOING NOTHING WITH JWT");
+                    financialService.UpdateToken(jwt);
                 }
             }
         }
@@ -155,7 +160,7 @@ namespace TenmoClient
         
         public void GetUserBalance()
         {
-            Console.WriteLine($"Your current balance is {balanceService.GetBalance().Balance.ToString("C")}");
+            Console.WriteLine($"Your current balance is {financialService.GetBalance().Balance.ToString("C")}");
         }
     }
 }

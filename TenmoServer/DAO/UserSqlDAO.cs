@@ -10,6 +10,7 @@ namespace TenmoServer.DAO
     {
         private readonly string connectionString;
         const decimal startingBalance = 1000;
+        private const string GetAllOtherUsersSQL = "SELECT u.username FROM users u WHERE NOT u.username = @user"; // used in getother users
 
         public UserSqlDAO(string dbConnectionString)
         {
@@ -89,7 +90,28 @@ namespace TenmoServer.DAO
             return GetUser(username);
         }
 
-        private User GetUserFromReader(SqlDataReader reader)
+        public List<User> GetAllOtherUsers(int user_id)
+        {
+            List<User> otherUsers = new List<User>();
+            //TranferSqlDAO transferDao = new TranferSqlDAO();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand command = new SqlCommand(GetAllOtherUsersSQL, conn);
+                command.Parameters.AddWithValue("@user", user_id);
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+
+                    User user = new User();
+                    user.Username = Convert.ToString(reader["username"]); // ["column name"]
+                    otherUsers.Add(user);
+                }
+            }
+            return otherUsers;
+        }
+            private User GetUserFromReader(SqlDataReader reader)
         {
             return new User()
             {

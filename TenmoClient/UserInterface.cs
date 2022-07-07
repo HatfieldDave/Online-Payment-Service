@@ -91,12 +91,13 @@ namespace TenmoClient
 
                         case 4: // Send TE Bucks
                             //make below into sub routine
-                            List<API_User> otherUsers = financialService.GetAllOtherUsers();
-                            foreach (API_User user in otherUsers)
-                            { 
-                                Console.WriteLine($"{user.Username}");
-                            }
-                            Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
+                            ListAllOtherUsersToConsole();
+                            int transferToId = GetTransferToIdFromUser();
+                            int transferAmmount = GetTransferAmmountFromUser();
+                            Transfer transfer = new Transfer();
+                            transfer.amount = transferAmmount;
+                            transfer.account_to = transferToId;
+                            financialService.TransferTEBucks(transfer);
                             break;
 
                         case 5: // Request TE Bucks
@@ -123,6 +124,20 @@ namespace TenmoClient
                     }
                 }
             } while (menuSelection != 0);
+        }
+
+        private int GetTransferAmmountFromUser()
+        {
+            Console.WriteLine("Please type the quantity of TE Bucks to transfer to: ");
+            string answer = Console.ReadLine(); //TODO protect from bad input
+            return Convert.ToInt32(answer);
+        }
+
+        private int GetTransferToIdFromUser()
+        {
+            Console.WriteLine("Please type the number of user to transfer to: ");
+            string answer = Console.ReadLine(); //TODO protect from bad input
+            return Convert.ToInt32(answer);
         }
 
         private void HandleUserRegister()
@@ -161,6 +176,16 @@ namespace TenmoClient
         public void GetUserBalance()
         {
             Console.WriteLine($"Your current balance is {financialService.GetBalance().Balance.ToString("C")}");
+        }
+
+        public void ListAllOtherUsersToConsole()
+        {
+            List<API_User> otherUsers = financialService.GetAllOtherUsers();
+            foreach (API_User user in otherUsers)
+            {
+                Console.WriteLine($"{user.Username}");
+                Console.WriteLine($"{user.UserId}");
+            }
         }
     }
 }

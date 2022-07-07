@@ -17,32 +17,20 @@ namespace TenmoServer.DAO
             this.connectionString = dbConnectionString;
         }
 
-        //public List<User> GetAllOtherUsers(int user_id)
-        //{
-        //    List<User> otherUsers = new List<User>();
-        //    //TranferSqlDAO transferDao = new TranferSqlDAO();
-        //    using (SqlConnection conn = new SqlConnection(connectionString))
-        //    {
-        //        conn.Open();
-        //        SqlCommand command = new SqlCommand(GetAllOtherUsersSQL, conn);
-        //        command.Parameters.AddWithValue("@user", user_id);
-
-        //        SqlDataReader reader = command.ExecuteReader();
-        //        while (reader.Read())
-        //        {
-
-        //            User user = new User();
-        //            user.Username = Convert.ToString(reader["username"]); // ["column name"]
-        //            otherUsers.Add(user);
-        //        }
-        //    }
-        //    return otherUsers;
-        //}
+        public Transfer NewTransfer(Transfer transfer)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                const string sql = "INSERT transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES ((SELECT transfer_type_id FROM transfer_types WHERE transfer_type_desc = 'Send'), (SELECT transfer_status_id FROM transfer_statuses WHERE transfer_status_desc = 'Approved'), (SELECT account_id FROM accounts WHERE user_id = @user_id), (SELECT account_id FROM accounts WHERE user_id = @user_to_id), @amount);";
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@user_id", transfer.user_id );
+                command.Parameters.AddWithValue("@user_to_id", transfer.account_to);  // were passing in the user to id in the account to slot
+                command.Parameters.AddWithValue("@amount", transfer.amount);
+                int id = Convert.ToInt32(command.ExecuteScalar());
+                transfer.transfer_id = id;
+                return transfer;
+            }
+        }
     }
-
-
-
-
-
-
 }

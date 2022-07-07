@@ -93,25 +93,30 @@ namespace TenmoServer.DAO
         public List<User> GetAllOtherUsers(int user_id)
         {
             List<User> otherUsers = new List<User>();
-            //TranferSqlDAO transferDao = new TranferSqlDAO();
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                SqlCommand command = new SqlCommand(GetAllOtherUsersSQL, conn);
-                command.Parameters.AddWithValue("@user", user_id);
 
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                SqlCommand cmd = new SqlCommand("SELECT u.username, u.user_id FROM users u WHERE NOT u.user_id = @user_id", conn);
+                cmd.Parameters.AddWithValue("@user_id", user_id);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
+                    while (reader.Read())
+                    {
+                        User u = new User();
+                        u.UserId = Convert.ToInt32(reader["user_id"]);
+                        u.Username = Convert.ToString(reader["username"]);
+                        otherUsers.Add(u);
+                    }
 
-                    User user = new User();
-                    user.Username = Convert.ToString(reader["username"]); // ["column name"]
-                    otherUsers.Add(user);
                 }
+                return otherUsers;
             }
-            return otherUsers;
         }
-            private User GetUserFromReader(SqlDataReader reader)
+        private User GetUserFromReader(SqlDataReader reader)
         {
             return new User()
             {

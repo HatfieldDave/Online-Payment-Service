@@ -31,6 +31,26 @@ namespace TenmoClient.APIClients
             return response.Data;
         }
 
+        public bool TransferTEBucks(Transfer transfer)
+        {
+            RestRequest request = new RestRequest($"{API_BASE_URL}transfers");  //TODO rename to username if doesn't work
+            request.AddHeader("Authorization", "Bearer " + token);
+            request.AddJsonBody(transfer);
+            IRestResponse<AccountBalance> response = client.Post<AccountBalance>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("Could not connect to the server; Try again later!");
+                return false;
+            }
+            if (!response.IsSuccessful)
+            {
+                Console.WriteLine("Problem getting other users: " + response.StatusDescription);
+                Console.WriteLine(response.Content);
+                return false;
+            }
+            return true; //TODO replace when works
+
+        }
 
         public AccountBalance GetBalance()
         {

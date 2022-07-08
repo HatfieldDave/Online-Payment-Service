@@ -20,12 +20,12 @@ namespace TenmoServer.Controllers
             // to do dao stuff and things 
         }
 
-        [HttpGet ("")] // may need to change inside ""
+        [HttpGet("")] // may need to change inside ""
         public AccountBalance GetBalance(string username)
-        {   
-            AccountBalance accountBalance = 
-            return 
+        {
+            //AccountBalance accountBalance = new
+            return null;
         }
 
-    
+    }
 }

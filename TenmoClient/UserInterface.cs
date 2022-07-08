@@ -96,7 +96,7 @@ namespace TenmoClient
                             int transferAmmount = GetTransferAmmountFromUser();
                             Transfer transfer = new Transfer();
                             transfer.amount = transferAmmount;
-                            transfer.account_to = transferToId;
+                            transfer.user_to_id = transferToId;
                             financialService.TransferTEBucks(transfer);
                             break;
 

@@ -12,6 +12,8 @@ namespace TenmoClient.Data
         public int transfer_type_id { get; set; }
         public int account_from { get; set; }
         public int account_to { get; set; }
+        public int user_to_id { get; set; }
+        
         public decimal amount { get; set; }
     }
 }

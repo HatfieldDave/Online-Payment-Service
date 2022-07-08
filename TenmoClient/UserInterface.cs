@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using TenmoClient.APIClients;
 using TenmoClient.Data;
 
 namespace TenmoClient
@@ -7,6 +9,7 @@ namespace TenmoClient
     {
         private readonly ConsoleService consoleService = new ConsoleService();
         private readonly AuthService authService = new AuthService();
+        private readonly FinancialService financialService = new FinancialService();
 
         private bool quitRequested = false;
 
@@ -41,7 +44,7 @@ namespace TenmoClient
             }
             else if (loginRegister == 2)
             {
-                HandleUserRegister();
+               HandleUserRegister();
             }
             else
             {
@@ -75,7 +78,7 @@ namespace TenmoClient
                     switch (menuSelection)
                     {
                         case 1: // View Balance
-                            Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
+                            GetUserBalance(); // TODO: Implement me
                             break;
 
                         case 2: // View Past Transfers
@@ -87,7 +90,14 @@ namespace TenmoClient
                             break;
 
                         case 4: // Send TE Bucks
-                            Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
+                            //make below into sub routine
+                            ListAllOtherUsersToConsole();
+                            int transferToId = GetTransferToIdFromUser();
+                            int transferAmmount = GetTransferAmmountFromUser();
+                            Transfer transfer = new Transfer();
+                            transfer.amount = transferAmmount;
+                            transfer.account_to = transferToId;
+                            financialService.TransferTEBucks(transfer);
                             break;
 
                         case 5: // Request TE Bucks
@@ -114,6 +124,20 @@ namespace TenmoClient
                     }
                 }
             } while (menuSelection != 0);
+        }
+
+        private int GetTransferAmmountFromUser()
+        {
+            Console.WriteLine("Please type the quantity of TE Bucks to transfer to: ");
+            string answer = Console.ReadLine(); //TODO protect from bad input
+            return Convert.ToInt32(answer);
+        }
+
+        private int GetTransferToIdFromUser()
+        {
+            Console.WriteLine("Please type the number of user to transfer to: ");
+            string answer = Console.ReadLine(); //TODO protect from bad input
+            return Convert.ToInt32(answer);
         }
 
         private void HandleUserRegister()
@@ -143,9 +167,24 @@ namespace TenmoClient
                 {
                     string jwt = authenticatedUser.Token;
 
-                    // TODO: Do something with this JWT.
-                    Console.WriteLine("DOING NOTHING WITH JWT");
+                    financialService.UpdateToken(jwt);
                 }
+            }
+        }
+
+        
+        public void GetUserBalance()
+        {
+            Console.WriteLine($"Your current balance is {financialService.GetBalance().Balance.ToString("C")}");
+        }
+
+        public void ListAllOtherUsersToConsole()
+        {
+            List<API_User> otherUsers = financialService.GetAllOtherUsers();
+            foreach (API_User user in otherUsers)
+            {
+                Console.WriteLine($"{user.Username}");
+                Console.WriteLine($"{user.UserId}");
             }
         }
     }

@@ -8,6 +8,7 @@ using TenmoServer.Models;
 using TenmoServer.DAO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using System.Data.SqlClient;
 
 namespace TenmoServer.Controllers
 {
@@ -34,7 +35,11 @@ namespace TenmoServer.Controllers
         {
             int id = LoggedInUserId;
             AccountBalance accountBalance = accountBalanceDAO.GetBalance(id);
+
+
             return Ok(accountBalance);
+
+
         }
 
         [HttpGet("users")]  //TODO switch to username if doesn't work
@@ -48,24 +53,30 @@ namespace TenmoServer.Controllers
         [HttpPost("transfers")]
         public ActionResult PostNewTransfer(Transfer transfer)
         {
-            // TODO: Let's explore User.Identity.Name
-            //string username = User.Identity.Name; // Built into ASP .NET, gets the name from JWT
-                                                  // TODO: Associate the joke with the user's logged in name
-            int id = LoggedInUserId; // A custom derived property, defined below
-            transfer.user_id = id;                         // This ID came from the JWT's "sub" claim. sub == subject or the ID of the user.
+
+            int id = LoggedInUserId;
+            transfer.user_id = id;
             AccountBalance accountBalance = accountBalanceDAO.GetBalance(id);
-            // transfer.transfer_id = id;
+
             if (transfer.amount < accountBalance.Balance)
             {
-            Transfer newTransfer = transferDAO.NewTransfer(transfer);
+                try
+                {
+                    Transfer newTransfer = transferDAO.NewTransfer(transfer);
+                    return Ok(newTransfer);
+                }
+                catch (SqlException ex)
+                {
+                    return BadRequest(new { message = "Illegal User Selected.: " + ex.Message});
+                }
 
-            return Ok(newTransfer); // or Created("jokes/" + createdJoke.Id, createdJoke);
 
             }
-            else
+            else if (transfer.amount <= 0)
             {
-                return BadRequest("Insuffcient funds for transfer.");
+                return BadRequest(new { message = "Transfer must be more than 0 and have enough funds" }); //TODO remove full error message
             }
+            return BadRequest(new { message = "Can only choose accounts that exist" });
 
         }
         private int LoggedInUserId

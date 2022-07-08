@@ -82,6 +82,7 @@ namespace TenmoClient
                             break;
 
                         case 2: // View Past Transfers
+                            WritePastTransersToConsole();
                             Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
                             break;
 
@@ -89,15 +90,9 @@ namespace TenmoClient
                             Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
                             break;
 
-                        case 4: // Send TE Bucks
-                            //make below into sub routine
+                        case 4: // Send TE Bucks                           
                             ListAllOtherUsersToConsole();
-                            int transferToId = GetTransferToIdFromUser();
-                            int transferAmmount = GetTransferAmmountFromUser();
-                            Transfer transfer = new Transfer();
-                            transfer.amount = transferAmmount;
-                            transfer.user_to_id = transferToId;
-                            financialService.TransferTEBucks(transfer);
+                            ExecuteTransfer();
                             break;
 
                         case 5: // Request TE Bucks
@@ -124,6 +119,21 @@ namespace TenmoClient
                     }
                 }
             } while (menuSelection != 0);
+        }
+
+        private void WritePastTransersToConsole()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ExecuteTransfer()
+        {
+            int transferToId = GetTransferToIdFromUser();
+            int transferAmmount = GetTransferAmmountFromUser();
+            Transfer transfer = new Transfer();
+            transfer.amount = transferAmmount;
+            transfer.user_to_id = transferToId;
+            financialService.TransferTEBucks(transfer);
         }
 
         private int GetTransferAmmountFromUser()
@@ -171,8 +181,7 @@ namespace TenmoClient
                 }
             }
         }
-
-        
+     
         public void GetUserBalance()
         {
             Console.WriteLine($"Your current balance is {financialService.GetBalance().Balance.ToString("C")}");

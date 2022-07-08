@@ -17,6 +17,8 @@ namespace TenmoServer.DAO
             this.connectionString = dbConnectionString;
         }
 
+
+
         public Transfer NewTransfer(Transfer transfer)
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -29,11 +31,31 @@ namespace TenmoServer.DAO
                 command.Parameters.AddWithValue("@user_id", transfer.user_id );
                 command.Parameters.AddWithValue("@user_to_id", transfer.user_to_id);  // were passing in the user to id in the account to slot
                 command.Parameters.AddWithValue("@amount", transfer.amount);
+                //TODO add protection vs non user #id
                 int id = Convert.ToInt32(command.ExecuteScalar());
                 transfer.transfer_id = id;
                 
                 return transfer;
             }
+        }
+        public List<Transfer> GetUsersTransfers(int user_id)
+        {
+            const string sql = "SELECT * FROM transfers INNER JOIN accounts ON transfers.account_from = accounts.account_id WHERE user_id = @user_id UNION SELECT * FROM transfers INNER JOIN accounts ON transfers.account_to = accounts.account_id WHERE user_id = @user_id";
+
+            Transfer allTransfers = new Transfer();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                SqlCommand command = new SqlCommand(sql, conn);
+                command.Parameters.AddWithValue("@user_id", user_id);
+
+                SqlDataReader reader = command.ExecuteReader();
+                reader.Read();
+                decimal balance = Convert.ToDecimal(reader["balance"]); // ["column name"]
+                
+            }
+
+            return allTransfers;
         }
     }
 }

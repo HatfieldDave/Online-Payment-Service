@@ -19,7 +19,7 @@ namespace TenmoClient.APIClients
             IRestResponse<List<API_User>> response = client.Get<List<API_User>>(request);
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
-                Console.WriteLine("Could not connect to the server; Try again later!");
+                Console.WriteLine("Request rejected by server.");
                 return null;
             }
             if (!response.IsSuccessful)
@@ -39,13 +39,13 @@ namespace TenmoClient.APIClients
             IRestResponse<AccountBalance> response = client.Post<AccountBalance>(request);
             if (response.ResponseStatus != ResponseStatus.Completed)
             {
-                Console.WriteLine("Could not connect to the server; Try again later!");
+                Console.WriteLine("Insuffcient funds, please buy more TE Bucks!");
                 return false;
             }
             if (!response.IsSuccessful)
             {
-                Console.WriteLine("Problem getting other users: " + response.StatusDescription);
-                Console.WriteLine(response.Content);
+                Console.WriteLine("Invalid Transfer request. Denied. ");
+                //Console.WriteLine(response.Content);  //TODO change or remove
                 return false;
             }
             return true; //TODO replace when works

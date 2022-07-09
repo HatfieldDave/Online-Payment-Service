@@ -30,6 +30,44 @@ namespace TenmoClient.APIClients
             }
             return response.Data;
         }
+        public List<Transfer> GetUsersTranactions()
+        {
+            RestRequest request = new RestRequest($"{API_BASE_URL}transfers");  //TODO rename to username if doesn't work
+            request.AddHeader("Authorization", "Bearer " + token);
+            IRestResponse<List<Transfer>> response = client.Get<List<Transfer>>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("Request rejected by server.");
+                return null;
+            }
+            if (!response.IsSuccessful)
+            {
+                Console.WriteLine("Problem getting transfer list: " + response.StatusDescription);
+                Console.WriteLine(response.Content);
+                return null;
+            }
+            return response.Data;
+        }
+
+        public Transfer GetTransferById(int id)
+        {
+            RestRequest request = new RestRequest($"{API_BASE_URL}transfers/" + id);  //TODO rename to username if doesn't work
+            request.AddHeader("Authorization", "Bearer " + token);
+            
+            IRestResponse<Transfer> response = client.Get<Transfer>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed)
+            {
+                Console.WriteLine("Please recheck transfer number.");
+                return null;
+            }
+            if (!response.IsSuccessful)
+            {
+                Console.WriteLine("Invalid Transfer request. Denied. ");
+                //Console.WriteLine(response.Content);  //TODO change or remove
+                return null;
+            }
+            return response.Data; //TODO replace when works 
+        }
 
         public bool TransferTEBucks(Transfer transfer)
         {

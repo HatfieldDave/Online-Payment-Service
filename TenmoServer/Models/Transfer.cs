@@ -23,6 +23,10 @@ namespace TenmoServer.Models
         [Range(0,double.MaxValue)]
         public decimal amount { get; set; }
         public int user_to_id { get; set; }
+        public string transfer_to_username { get; set; }
+        public string transfer_from_username { get; set; }
+        public string transfer_type_desc { get; set; }
+        public string transfer_status_desc { get; set; }
 
     }
 }

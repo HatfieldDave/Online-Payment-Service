@@ -44,7 +44,7 @@ namespace TenmoClient
             }
             else if (loginRegister == 2)
             {
-               HandleUserRegister();
+                HandleUserRegister();
             }
             else
             {
@@ -83,7 +83,8 @@ namespace TenmoClient
 
                         case 2: // View Past Transfers
                             WritePastTransersToConsole();
-                            Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
+                            ConsoleWriteTransferById();
+                            //Console.WriteLine("NOT IMPLEMENTED!"); // TODO: Implement me
                             break;
 
                         case 3: // View Pending Requests
@@ -121,9 +122,55 @@ namespace TenmoClient
             } while (menuSelection != 0);
         }
 
+        private void ConsoleWriteTransferById()
+        {
+            Console.WriteLine("Enter number of transfer ID to view details: ");
+            string tranferId = Console.ReadLine();
+            try
+            {
+                int tranferIdInt = Convert.ToInt32(tranferId);
+                Transfer transfer = financialService.GetTransferById(tranferIdInt);
+                Console.WriteLine();
+                Console.WriteLine("Transfer ID: " + transfer.transfer_id);
+                Console.WriteLine("from: " + transfer.transfer_from_username);
+                Console.WriteLine("  to: " + transfer.transfer_to_username);
+                Console.WriteLine("Type: " + transfer.transfer_type_desc);
+                Console.WriteLine("Status: " + transfer.transfer_status_desc);
+                Console.WriteLine("Amount: " + transfer.amount.ToString("C"));
+
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("No transfers to display.");
+            }
+            catch (NullReferenceException)
+            { 
+                Console.WriteLine("Un-readable or incorrect ID given");
+            }
+
+
+
+        }
+
         private void WritePastTransersToConsole()
         {
-            throw new NotImplementedException();
+            List<Transfer> transfers = financialService.GetUsersTranactions();
+            foreach (Transfer transfer in transfers)
+            {
+
+                Console.Write($"{transfer.transfer_id}".PadRight(5));
+                if (transfer.username == transfer.transfer_to_username)
+                {
+                    Console.Write($"from: {transfer.transfer_from_username}");
+                }
+                else
+                {
+                    Console.Write($"  to: {transfer.transfer_to_username}");
+                }
+                Console.Write($"{transfer.amount.ToString("C")}".PadLeft(10));
+                Console.WriteLine("");
+
+            }
         }
 
         private void ExecuteTransfer()
@@ -181,7 +228,7 @@ namespace TenmoClient
                 }
             }
         }
-     
+
         public void GetUserBalance()
         {
             Console.WriteLine($"Your current balance is {financialService.GetBalance().Balance.ToString("C")}");
@@ -198,3 +245,4 @@ namespace TenmoClient
         }
     }
 }
+

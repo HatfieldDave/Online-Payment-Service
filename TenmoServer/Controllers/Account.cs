@@ -50,6 +50,35 @@ namespace TenmoServer.Controllers
             return Ok(otherUsers);
         }
 
+        [HttpGet("transfers/{id}")]
+        public ActionResult GetTransferbyId(int id)
+        {
+            int userid = LoggedInUserId;
+            List<Transfer> usersTransfers = transferDAO.GetUsersTransfers(userid);
+            foreach (Transfer transfer in usersTransfers)
+            {
+                if (transfer.transfer_id == id)
+                {
+                    return Ok(transfer);
+                }
+            }
+            return NotFound("Could not find transfer: " + id);
+        }
+
+        [HttpGet("transfers")]
+        public ActionResult GetUsersTransfers()
+        {
+            int id = LoggedInUserId;
+            List<Transfer> usersTransfers = transferDAO.GetUsersTransfers(id);
+            foreach (Transfer transfer in usersTransfers)
+            {
+                transfer.transfer_status_desc = "";
+                transfer.transfer_type_desc = "";
+            }
+            return Ok(usersTransfers);
+        }
+
+
         [HttpPost("transfers")]
         public ActionResult PostNewTransfer(Transfer transfer)
         {
